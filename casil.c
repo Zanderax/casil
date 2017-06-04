@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 
 char start[] = ".text\n\t.global _start\n\n_start:\n";
 char move1[] = "movl    $";
@@ -31,6 +32,9 @@ int main( void )
 	fwrite( intrp, 14, sizeof( char ), fp);
 	 
 	fclose( fp );
+
+	system("as exe.out -o out.o --32");
+	system("ld -m elf_i386 -s -o out out.o");
 	
 	return 0;
 }

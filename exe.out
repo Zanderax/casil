@@ -2,6 +2,6 @@
 	.global _start
 
 _start:
-movl    $6, %ebx
+movl    $7, %ebx
 movl    $1, %eax
 int     $0x80
