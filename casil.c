@@ -11,13 +11,37 @@ char intrp[] = "int     $0x80\n";
 int main( void )
 {
 
-	char* fileName = malloc( sizeof( char ) * FILE_NAME_SIZE );
+	char* fileName = calloc( FILE_NAME_SIZE, sizeof( char ) );
 	fileName =	"source.cas";
-	char *source;
+	char *source, *symbols;
 	
-	long int size = readSourceFromFile( fileName, &source );
+	size_t sourceSize = readSourceFromFile( fileName, &source );
+	size_t symbolSize = 0;
 
-	char c = source[1];
+	int i;
+	for( i = 0; i < sourceSize; ++i)
+	{
+		printf("%d ", source[i]);
+	}
+	printf("\n");
+
+	symbols = calloc( sourceSize, sizeof( char ) );
+ 
+	int error = parse( source, symbols, sourceSize, &symbolSize );
+
+	if (error)
+	{
+		printf("Error Code = %d\n", error );
+		return error;
+	}
+	
+	for( i = 0; i < symbolSize; ++i)
+	{
+		printf("%d ", symbols[i]);
+	}
+	printf("\n");
+	
+	char c = source[0];
 	int n = c;
 
 	FILE *fp;
@@ -57,4 +81,40 @@ long int readSourceFromFile( char* fileName, char** source )
 	int i = 0;
 	while( ( (*source)[i++] = fgetc( fp ) ) != EOF );
 	return size;
+}
+
+int parse( char* source, char* symbols, size_t sourceSize, size_t *symbolSize )
+{
+	int i, symbolCount = 0;
+	for( i = 0; i < sourceSize; ++i )
+	{
+		switch( source[i] )
+		{
+			case EQUALS:
+				if( !isNum(source[i+1]) )
+				{
+					return -1;
+				}
+				symbols[symbolCount++] = EQUALS;
+				break;
+			case NEW_LINE:
+				break;
+			default:
+				if( isNum(source[i]) )
+				{
+					symbols[symbolCount++] = source[i];
+				}
+				else
+				{
+					return source[i];
+				}
+		}
+	}
+	*symbolSize = symbolCount;
+	return 0;
+} 
+
+int isNum( char c )
+{
+	return !( c < 48 || c > 57 );
 }

@@ -10,8 +10,10 @@ typedef enum SYMBOLS {
 	MINUS = '-',
 	MULTIPLY = '*',
 	NEW_LINE = 10,
+	EQUALS = '='
 } SYMBOLS;
 
 long int readSourceFromFile( char* fileName, char** source );
-/*int isNumber( char c );*/
+int parse( char* source, char* symbols, size_t sourceSize, size_t* symbolSize );
+int isNum( char c );
 /*int toNum( char c );*/
